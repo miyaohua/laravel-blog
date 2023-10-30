@@ -7,6 +7,9 @@ class CategoryService {
         $result = [];
         foreach ($array as $value){
             if($value['parent'] == $fid){
+                // 前端表格需要唯一的key
+                $value['key'] = $value['id'];
+
                 $children = $this->categoryToArr($array,$value['id']);
                 if(count($children)){
                     $value['children'] = $children;

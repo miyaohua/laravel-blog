@@ -24,7 +24,7 @@ class AuthController extends Controller
         if($user && Hash::check($request->password,$user->password)){
             // 生成token
             $token = $user->createToken('auth')->plainTextToken;
-            return $this->success('登录成功',["token"=>$token]);
+            return $this->success('登录成功',["token"=>$token,'userInfo'=>$user]);
         }
         return $this->error('账号或密码错误');
     }

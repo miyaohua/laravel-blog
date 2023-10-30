@@ -2,34 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexArticleRequest;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
+use App\Http\Resources\ArticleResource;
+use App\Http\Services\ArticleService;
 use App\Models\Article;
 
 class ArticleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct()
     {
-        //
+        $this->middleware('auth:sanctum');
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display a listing of the resource.
      */
-    public function create()
+    public function index(IndexArticleRequest $request,Article $article)
     {
-        //
+        $this->authorize('viewAny',$article);
+        $ArticleService = new ArticleService();
+        $result = $ArticleService->articleMent(Article::with(['category','user'])->paginate($request->query('size')));
+        return $this->success('查询成功',$result);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreArticleRequest $request)
+    public function store(StoreArticleRequest $request,Article $article)
     {
-        //
+        $this->authorize('create',$article);
+        $article->fill($request->input())->save();
+        return $this->success('新增文章成功',$article->toArray());
     }
 
     /**
@@ -37,15 +42,8 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Article $article)
-    {
-        //
+        $this->authorize('view',$article);
+        return $this->success('查询成功',$article->load(['category','user'])->toArray());
     }
 
     /**
@@ -53,7 +51,9 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, Article $article)
     {
-        //
+        $this->authorize('update',$article);
+        $article->fill($request->input())->save();
+        return $this->success('更新文章成功',$article->toArray());
     }
 
     /**
@@ -62,5 +62,8 @@ class ArticleController extends Controller
     public function destroy(Article $article)
     {
         //
+        $this->authorize('delete',$article);
+        $article->delete();
+        return $this->success('删除成功',$article->toArray());
     }
 }

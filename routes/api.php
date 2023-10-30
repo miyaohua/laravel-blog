@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\AuthController;
 use \App\Http\Controllers\LinkController;
 use \App\Http\Controllers\CategoryController;
+use \App\Http\Controllers\ArticleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,3 +29,6 @@ Route::apiResource('link',LinkController::class);
 
 // 分类列表
 Route::apiResource('category',CategoryController::class);
+
+// 文章
+Route::apiResource('article',ArticleController::class);

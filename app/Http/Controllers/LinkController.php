@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexLinkRequest;
 use App\Http\Requests\StoreLinkRequest;
 use App\Http\Requests\UpdateLinkRequest;
 use App\Http\Resources\LinkResource;
 use App\Models\Link;
-use Illuminate\Http\Request;
 
 class LinkController extends Controller
 {
     public function __construct(){
-        $this->middleware('auth:sanctum')->except('index');
+        $this->middleware('auth:sanctum');
     }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexLinkRequest $request,Link $link)
     {
         // 所有友情连接
-        return LinkResource::collection(Link::all());
+        $this->authorize('viewAny',$link);
+        return $this->success('查询成功',Link::paginate($request->query('size')));
     }
 
     /**

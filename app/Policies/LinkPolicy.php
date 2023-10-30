@@ -14,6 +14,7 @@ class LinkPolicy
     public function viewAny(User $user): bool
     {
         //
+        return isSuperadmin();
     }
 
     /**
