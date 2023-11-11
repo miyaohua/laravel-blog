@@ -21,7 +21,7 @@ class CategoryController extends Controller
     public function index(Category $category)
     {
         $this->authorize('viewAny',$category);
-        $data = Category::all()->toArray();
+        $data = Category::orderBy('created_at','DESC')->get()->toArray();
         $categroyService = new CategoryService();
         // 处理树形结构数据
         $result = $categroyService->categoryToArr($data,0);
@@ -67,7 +67,11 @@ class CategoryController extends Controller
 
         $isParent = Category::where('parent',$category->id)->first();
         if($isParent){
-            return $this->error('当前分类下已有子集分类，不可作为二级分类');
+            return $this->error('当前分类下已有子级分类，不可作为二级分类');
+        }
+
+        if($request->id === $request->parent){
+            return $this->error('父级分类不能为自身');
         }
 
         $category->fill($request->input())->save();
@@ -80,10 +84,11 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $this->authorize('delete',$category);
+        if(Category::where('parent',$category->id)->first()){
+            return $this->error('当前分类下有二级分类，无法删除');
+        }
         // 分类 => 文章 关联id清空
         Article::where('category_id',$category->id)->update(['category_id'=>null]);
-        // 删除一级后还应该删除下级分类
-        Category::where('parent',$category->id)->delete();
         // 删除自身
         $category->delete();
         return $this->success('删除成功',$category->toArray());

@@ -5,6 +5,10 @@ use \App\Http\Controllers\AuthController;
 use \App\Http\Controllers\LinkController;
 use \App\Http\Controllers\CategoryController;
 use \App\Http\Controllers\ArticleController;
+use \App\Http\Controllers\PublicController;
+use \App\Http\Controllers\UserController;
+use \App\Http\Controllers\FileController;
+use \App\Http\Controllers\TagController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,18 +21,46 @@ use \App\Http\Controllers\ArticleController;
 |
 */
 // 登录 注册
-Route::controller(AuthController::class)->prefix('auth')->group(function(){
+Route::controller(AuthController::class)->prefix('auth')->group(function () {
     // 登录
-    Route::post('/login','login');
+    Route::post('/login', 'login');
     // 注册
-    Route::post('/registry','registry');
+    Route::post('/registry', 'registry');
 });
 
 // 友情连接
-Route::apiResource('link',LinkController::class);
+Route::apiResource('link', LinkController::class);
 
 // 分类列表
-Route::apiResource('category',CategoryController::class);
+Route::apiResource('category', CategoryController::class);
 
 // 文章
-Route::apiResource('article',ArticleController::class);
+Route::apiResource('article', ArticleController::class);
+
+// 上传文件
+Route::apiResource('file', FileController::class);
+
+// 标签
+Route::apiResource('tag', TagController::class);
+
+
+// 用户接口 验证当前登录人
+Route::controller(UserController::class)->prefix('user')->group(function () {
+    // 用户修改头像
+    Route::post('avatar', 'changeAvatar');
+});
+
+
+
+
+// 公共接口 不需要登录
+Route::controller(PublicController::class)->prefix('public')->group(function () {
+    // 获取首页文章
+    Route::get('/article', 'article');
+    // 获取友情链接
+    Route::get('/link', 'link');
+    // 获取热门文章
+    Route::get('/popular', 'popular');
+    // 获取文章内容
+    Route::get('/articleContent', 'articleContent');
+});

@@ -7,7 +7,10 @@ use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Http\Resources\ArticleResource;
 use App\Http\Services\ArticleService;
+use App\Http\Services\TagService;
 use App\Models\Article;
+use App\Models\Tag;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
@@ -15,7 +18,6 @@ class ArticleController extends Controller
     {
         $this->middleware('auth:sanctum');
     }
-
     /**
      * Display a listing of the resource.
      */
@@ -23,17 +25,21 @@ class ArticleController extends Controller
     {
         $this->authorize('viewAny',$article);
         $ArticleService = new ArticleService();
-        $result = $ArticleService->articleMent(Article::with(['category','user'])->paginate($request->query('size')));
+        $result = $ArticleService->articleMent(Article::with(['category','user'])->orderBy('created_at', 'DESC')->paginate($request->query('size')));
         return $this->success('查询成功',$result);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreArticleRequest $request,Article $article)
+    public function store(StoreArticleRequest $request,Article $article,Tag $tag)
     {
         $this->authorize('create',$article);
-        $article->fill($request->input())->save();
+        $article->fill($request->input());
+        $article->user_id = Auth::id();
+        $TagService = new TagService();
+        $article->tag = $TagService->addTag($request->tags);
+        $article->save();
         return $this->success('新增文章成功',$article->toArray());
     }
 
@@ -52,7 +58,10 @@ class ArticleController extends Controller
     public function update(UpdateArticleRequest $request, Article $article)
     {
         $this->authorize('update',$article);
-        $article->fill($request->input())->save();
+        $article->fill($request->input());
+        $TagService = new TagService();
+        $article->tag = $TagService->addTag($request->tags);
+        $article->save();
         return $this->success('更新文章成功',$article->toArray());
     }
 

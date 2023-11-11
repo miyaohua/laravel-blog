@@ -24,6 +24,8 @@ class ArticleFactory extends Factory
             "content"=>fake()->sentence(),
             "category_id"=>Category::inRandomOrder()->first()->id,
             "user_id"=>User::inRandomOrder()->first()->id,
+            "abstract"=>fake()->text(20),
+            "thumbnail"=>fake()->imageUrl(300,300)
         ];
     }
 }

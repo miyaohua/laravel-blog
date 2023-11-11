@@ -20,7 +20,7 @@ class LinkController extends Controller
     {
         // 所有友情连接
         $this->authorize('viewAny',$link);
-        return $this->success('查询成功',Link::paginate($request->query('size')));
+        return $this->success('查询成功',Link::orderBy('created_at' ,'DESC')->paginate($request->query('size')));
     }
 
     /**

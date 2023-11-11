@@ -15,11 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('title')->comment('文章标题');
             $table->text('content')->comment('文章内容');
+            $table->string('abstract')->comment('文章摘要');
+            $table->string('thumbnail')->comment('缩略图');
+            $table->integer('like')->default(0)->comment('喜欢');
+            $table->integer('preview')->default(0)->comment('预览');
             $table->foreignId('category_id')->nullable()->constrained(); // 分类id
             $table->foreignId('user_id')->constrained(); // 用户id
             $table->string('tag')->nullable()->comment('文章标签');
             $table->integer('status')->default(0)->comment('0显示/1隐藏');
-            $table->integer('popular')->default(0)->comment('0非置顶/1置顶');
+            $table->integer('popular')->default(1)->comment('0非热门/1热门');
             $table->timestamps();
         });
     }

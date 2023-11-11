@@ -20,7 +20,9 @@ class AuthController extends Controller
         ],['username'=>'用户名为4-16位字母','password'=>'密码为6-16个不含特殊符号的字符'])->validate();
         // 验证通过
         $user = User::where('username',$request->username)->first();
-
+        if($user->id !== 1){
+            return $this->error('无访问权限');
+        }
         if($user && Hash::check($request->password,$user->password)){
             // 生成token
             $token = $user->createToken('auth')->plainTextToken;
