@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\IndexFileRequest;
 use App\Http\Requests\StoreFileRequest;
+use App\Http\Services\FileService;
 use App\Models\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +20,10 @@ class FileController extends Controller
     {
         // 文件列表
         $this->authorize('viewAny', $file);
-        return $this->success('查询成功', File::orderBy('created_at', 'DESC')->paginate($request->query('size')));
+        $fileService = new FileService();
+        // return $this->success('查询成功', File::with('user')->orderBy('created_at', 'DESC')->paginate($request->query('size')));
+
+        return $this->success('查询成功', $fileService->getFileByUser(File::with('user')->orderBy('created_at', 'DESC')->paginate($request->query('size'))));
     }
 
     /**

@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
 
         Category::factory(20)->create();
 
-        Article::factory(100)->create();
+        Article::factory(10000)->create();
 
         Tag::factory(100)->create();
 
