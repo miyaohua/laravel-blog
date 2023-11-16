@@ -7,6 +7,7 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\File;
 use App\Models\Link;
+use App\Models\Tag;
 use App\Models\test;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -44,7 +45,9 @@ class DatabaseSeeder extends Seeder
 
         Category::factory(20)->create();
 
-        Article::factory(20)->create();
+        Article::factory(100)->create();
+
+        Tag::factory(100)->create();
 
 
 //        File::factory(30)->create();

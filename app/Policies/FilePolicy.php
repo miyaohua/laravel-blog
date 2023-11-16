@@ -11,6 +11,15 @@ class FilePolicy
     /**
      * Determine whether the user can create models.
      */
+    public function viewAny(User $user): bool
+    {
+        //
+        return isSuperadmin();
+    }
+
+    /**
+     * Determine whether the user can create models.
+     */
     public function create(User $user): bool
     {
         //
@@ -30,5 +39,6 @@ class FilePolicy
     public function delete(User $user, File $file): bool
     {
         //
+        return isSuperadmin();
     }
 }
