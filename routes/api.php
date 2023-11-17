@@ -47,7 +47,11 @@ Route::apiResource('tag', TagController::class);
 // 用户接口 验证当前登录人
 Route::controller(UserController::class)->prefix('user')->group(function () {
     // 用户修改头像
-    Route::post('avatar', 'changeAvatar');
+    Route::post('/changeAvatar', 'changeUserAvatar');
+    // 用户修改信息
+    Route::post('/changeInfo', 'changeUserInfo');
+    // 用户修改密码
+    Route::post('/changePassword', 'changeUserPassword');
 });
 
 

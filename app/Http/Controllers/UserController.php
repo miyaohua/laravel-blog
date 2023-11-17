@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreFileRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Rules\PasswordRule;
+use App\Models\File;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Services\FileService;
 
 class UserController extends Controller
 {
@@ -13,22 +19,44 @@ class UserController extends Controller
         $this->middleware(['auth:sanctum']);
     }
 
-    //
-    public function changeAvatar(Request $request){
-        // 规定限制的类型
-        $arrType = ['jpg','jpeg','png','gif','webp'];
-        // 获取上传的文件
-        $fileR = $request->file('file');
-        $lastStr = $fileR->getClientOriginalExtension();
-        if(!in_array($lastStr,$arrType,true)){
-            return $this->error('修改失败，文件类型检测失败');
+    // 修改用户头像
+    public function changeUserAvatar(StoreFileRequest $request)
+    {
+        $fileService = new FileService();
+        $resultArr = $fileService->uploadFile($request->file('file'), $request->hasFile('file'));
+        if ($resultArr["status"]) {
+            User::where('id', Auth::id())->update(['avatar' => $resultArr["message"]]);
+            return $this->success('修改成功', ["url" => $resultArr["message"]]);
         }
-       if($request->hasFile('file')){
-           $path = $fileR->store('uploads/'.date('Ym'),'public');
-           $result = '{mt_blog}/storage/'.$path;
-           User::where('id',Auth::id())->update(['avatar'=>$result]);
-           return $this->success('修改成功',["url"=>$result]);
-       }
-       return $this->error('修改失败');
+        return $this->error($resultArr["message"]);
+    }
+
+    // 修改用户信息
+    public function changeUserInfo(Request $request)
+    {
+        Validator::make($request->input(), [
+            "sign" => ['required'],
+            "nikename" => ['required']
+        ])->validate();
+        User::where('id', Auth::id())->update(['sign' => $request->sign, 'nikename' => $request->nikename]);
+        // 修改成功后获取用户信息返回给前端
+        $resultInfo = User::where('id', Auth::id())->first();
+        return $this->success('修改成功', $resultInfo->toArray());
+    }
+
+    // 修改密码
+    public function changeUserPassword(Request $request)
+    {
+        Validator::make($request->input(), [
+            "oldpassword" => ['required', new PasswordRule()],
+            "password" => ['required', new PasswordRule(), 'confirmed'],
+        ], ['password' => '密码为6-16个不含特殊符号的字符'])->validate();
+
+        if (!Hash::check($request->oldpassword, User::where('id', Auth::id())->first()->password)) {
+            return $this->error('旧密码校验失败');
+        }
+
+        User::where('id', Auth::id())->update(['password' => Hash::make($request->password)]);
+        return $this->success('修改密码成功');
     }
 }

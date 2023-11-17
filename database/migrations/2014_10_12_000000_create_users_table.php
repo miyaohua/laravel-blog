@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('username')->unique()->comment('账号');
             $table->string('sign')->nullable()->comment('个性签名');
             $table->string('avatar')->nullable()->comment('用户头像');
+            $table->string('nikename')->nullable()->comment('用户别名');
             $table->string('email')->nullable()->unique();
             $table->string('password');
             $table->rememberToken();
