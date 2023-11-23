@@ -18,7 +18,7 @@ class AuthController extends Controller
         Validator::make($request->input(), [
             "username" => ['required', new UsernameRule(), Rule::exists('users')],
             "password" => ['required', new PasswordRule()]
-        ], ['username' => '用户名为4-16位字母', 'password' => '密码为6-16个不含特殊符号的字符'])->validate();
+        ], ['username.required' => '用户名必填', 'username.exists' => '用户名不存在', 'password.required' => '密码必填'])->validate();
         // 验证通过
         $user = User::where('username', $request->username)->first();
         if ($request->isSuperAdmin && $user->id !== 1) {
