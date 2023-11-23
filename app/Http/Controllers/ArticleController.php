@@ -53,7 +53,7 @@ class ArticleController extends Controller
         $tagResult = [];
         $tagsArray = explode(',', $articleTag);
         foreach ($tagsArray as $item) {
-            $tag = Tag::find($item)->tag_name; // 使用 find 方法查找标签
+            $tag = Tag::find($item) && Tag::find($item)->tag_name; // 使用 find 方法查找标签
             if ($tag) {
                 $tagResult[] = $tag;
             }

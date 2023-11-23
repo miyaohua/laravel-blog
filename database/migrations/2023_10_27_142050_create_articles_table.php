@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
             $table->string('title')->comment('文章标题');
-            $table->text('content')->comment('文章内容');
+            $table->longText('content')->comment('文章内容');
             $table->string('abstract')->comment('文章摘要');
             $table->string('thumbnail')->comment('缩略图');
             $table->integer('like')->default(0)->comment('喜欢');
