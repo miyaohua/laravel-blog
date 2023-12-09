@@ -11,6 +11,7 @@ use App\Rules\PasswordRule;
 use App\Models\File;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Services\FileService;
+use App\Models\Like;
 
 class UserController extends Controller
 {
@@ -55,8 +56,20 @@ class UserController extends Controller
         if (!Hash::check($request->oldpassword, User::where('id', Auth::id())->first()->password)) {
             return $this->error('旧密码校验失败');
         }
-
         User::where('id', Auth::id())->update(['password' => Hash::make($request->password)]);
         return $this->success('修改密码成功');
+    }
+
+    // 查询文章是否点赞
+    public function getArticleLike(Request $request)
+    {
+        Validator::make($request->input(), [
+            "article_id" => ['required',],
+        ], ['article_id' => '文章id必传'])->validate();
+        $user_id = Auth::id();
+        $article_id = $request->article_id;
+
+        $isLike = Like::where('user_id', $user_id)->where('article_id', $article_id)->first();
+        return $this->success('查询成功', $isLike ? $isLike->toArray() : []);
     }
 }

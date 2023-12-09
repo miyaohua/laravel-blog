@@ -5,10 +5,13 @@ use \App\Http\Controllers\AuthController;
 use \App\Http\Controllers\LinkController;
 use \App\Http\Controllers\CategoryController;
 use \App\Http\Controllers\ArticleController;
+use App\Http\Controllers\CommenController;
 use \App\Http\Controllers\PublicController;
 use \App\Http\Controllers\UserController;
 use \App\Http\Controllers\FileController;
+use App\Http\Controllers\LikeController;
 use \App\Http\Controllers\TagController;
+use App\Models\Commen;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +46,11 @@ Route::apiResource('file', FileController::class);
 // 标签
 Route::apiResource('tag', TagController::class);
 
+// 点赞
+Route::apiResource('like', LikeController::class);
+
+// 评论
+Route::apiResource('commen', CommenController::class);
 
 // 用户接口 验证当前登录人
 Route::controller(UserController::class)->prefix('user')->group(function () {
@@ -52,6 +60,8 @@ Route::controller(UserController::class)->prefix('user')->group(function () {
     Route::post('/changeInfo', 'changeUserInfo');
     // 用户修改密码
     Route::post('/changePassword', 'changeUserPassword');
+    // 用户查询文章点赞
+    Route::post('/getArticleLike', 'getArticleLike');
 });
 
 
@@ -67,4 +77,6 @@ Route::controller(PublicController::class)->prefix('public')->group(function () 
     Route::get('/popular', 'popular');
     // 获取文章内容
     Route::get('/articleContent', 'articleContent');
+    // 获取评论内容
+    Route::post('/getCommenContent', 'getCommenContent');
 });
