@@ -38,7 +38,9 @@ class ArticleController extends Controller
         $article->fill($request->input());
         $article->user_id = Auth::id();
         $TagService = new TagService();
-        $article->tag = $TagService->addTag($request->tags);
+        if (count($request->tags)) {
+            $article->tag = $TagService->addTag($request->tags);
+        }
         $article->save();
         return $this->success('新增文章成功', $article->toArray());
     }
@@ -49,17 +51,16 @@ class ArticleController extends Controller
     public function show(Article $article)
     {
         $this->authorize('view', $article);
-        $articleTag = $article->load(['category', 'user'])->toArray()['tag'];
         $tagResult = [];
+        $articleTag = $article->load(['category', 'user'])->toArray()['tag'];
         $tagsArray = explode(',', $articleTag);
         foreach ($tagsArray as $item) {
-            $tag = Tag::find($item) && Tag::find($item)->tag_name; // 使用 find 方法查找标签
+            $tag = Tag::find($item); // 使用 find 方法查找标签
             if ($tag) {
-                $tagResult[] = $tag;
+                $tagResult[] = $tag->tag_name;
             }
         }
         $article->tags = $tagResult;
-
         return $this->success('查询成功', $article);
     }
 
@@ -69,9 +70,10 @@ class ArticleController extends Controller
     public function update(UpdateArticleRequest $request, Article $article)
     {
         $this->authorize('update', $article);
+
         $article->fill($request->input());
-        if ($article->tag) {
-            $TagService = new TagService();
+        $TagService = new TagService();
+        if (count($request->tags)) {
             $article->tag = $TagService->addTag($request->tags);
         }
         $article->save();

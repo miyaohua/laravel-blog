@@ -30,7 +30,8 @@ class CommenController extends Controller
         $commen->user_id = Auth::id();
         $commen->article_id = $request->article_id;
         $commen->commen_content = $request->commen_content;
-        $commen->parent_id = $request->parent_id || 0;
+        $commen->parent_id = $request->parent_id ?? 0;
+        $commen->toplevel_id = $request->toplevel_id ?? 0;
         $commen->save();
         return $this->success('评论成功');
     }

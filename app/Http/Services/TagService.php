@@ -24,7 +24,6 @@ class TagService {
             $id = Tag::where('tag_name',$item)->first()->id;
             array_push($result,$id);
         }
-
         return implode(',',$result);
     }
 }

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('article_id')->comment('评论文章');
             $table->string('commen_content')->comment('评论内容');
             $table->integer('parent_id')->comment('评论父id');
+            $table->integer('toplevel_id')->comment('评论一级id');
             $table->timestamps();
         });
     }
