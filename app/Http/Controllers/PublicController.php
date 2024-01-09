@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PublicArticleRequest;
 use App\Http\Requests\PublicPopularRequest;
 use App\Models\Article;
+use App\Models\Category;
 use App\Models\Commen;
 use App\Models\Link;
 use App\Models\Tag;
-use App\Models\Test;
+use App\Models\Star;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+
 
 class PublicController extends Controller
 {
@@ -85,5 +87,45 @@ class PublicController extends Controller
         }
         $result = commenTree($commenArr, 0);
         return $this->success('查询成功', ["commen" => $result, "total" => $commenLen]);
+    }
+
+    public function getCategory()
+    {
+        $result = Category::orderBy('created_at', 'DESC')->get();
+        return $this->success('查询成功', $result);
+    }
+
+
+    public function getArticleByCategory(Request $request)
+    {
+        Validator::make($request->input(), [
+            "category_id" => ['required'],
+            "page" => ['required'],
+            "size" => ['required'],
+        ])->validate();
+        // 0 为全分类
+        if ($request->category_id == 0) {
+            return $this->success('查询成功', Article::orderBy('created_at', 'DESC')->with(['user', 'category'])->paginate($request->size));
+        } else {
+            return $this->success('查询成功', Article::where('category_id', $request->category_id)->orderBy('created_at', 'DESC')->with(['user', 'category'])->paginate($request->size));
+        }
+    }
+
+
+    public function getUserInfoByUserId(Request $request)
+    {
+        Validator::make($request->input(), [
+            "id" => ['required'],
+        ])->validate();
+        $user_id = $request->id;
+        $article_count = Article::where(['user_id' => $user_id, 'status' => '0'])->count();
+        $like_count = Article::where(['user_id' => $user_id])->get()->sum('like');
+        $star_count = Star::where('user_id', $user_id)->count();
+        $result = [
+            "article_count" => $article_count,
+            "like_count" => $like_count,
+            "star_count" => $star_count
+        ];
+        return $this->success('查询成功', $result);
     }
 }

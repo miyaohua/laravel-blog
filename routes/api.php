@@ -10,8 +10,9 @@ use \App\Http\Controllers\PublicController;
 use \App\Http\Controllers\UserController;
 use \App\Http\Controllers\FileController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\PreviewController;
+use App\Http\Controllers\StarController;
 use \App\Http\Controllers\TagController;
-use App\Models\Commen;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,8 @@ use App\Models\Commen;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+// @author 米耀华
+
 // 登录 注册
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
     // 登录
@@ -49,8 +52,14 @@ Route::apiResource('tag', TagController::class);
 // 点赞
 Route::apiResource('like', LikeController::class);
 
+// 收藏
+Route::apiResource('star', StarController::class);
+
 // 评论
 Route::apiResource('commen', CommenController::class);
+
+// 预览
+Route::apiResource('preview', PreviewController::class);
 
 // 用户接口 验证当前登录人
 Route::controller(UserController::class)->prefix('user')->group(function () {
@@ -62,6 +71,16 @@ Route::controller(UserController::class)->prefix('user')->group(function () {
     Route::post('/changePassword', 'changeUserPassword');
     // 用户查询文章点赞
     Route::post('/getArticleLike', 'getArticleLike');
+    // 用户查询文章收藏
+    Route::post('/getArticleStar', 'getArticleStar');
+    // 用户主页基本信息(创作、获赞、收藏)
+    Route::post('/getUserBaseInfo', 'getUserBaseInfo');
+    // 用户获取收藏列表
+    Route::post('/getCollectList', 'getCollectList');
+    // 用户获取喜欢列表
+    Route::post('/getLikeList', 'getLikeList');
+    // 用户获取最近浏览列表
+    Route::post('/getPreviewList', 'getPreviewList');
 });
 
 
@@ -79,4 +98,10 @@ Route::controller(PublicController::class)->prefix('public')->group(function () 
     Route::get('/articleContent', 'articleContent');
     // 获取评论内容
     Route::post('/getCommenContent', 'getCommenContent');
+    // 获取分类列表
+    Route::post('/getCategory', 'getCategory');
+    // 根据分类列表获取文章
+    Route::post('/getArticleByCategory', 'getArticleByCategory');
+    // 根据用户id获取用户主页基本信息(创作、获赞、收藏)
+    Route::post('/getUserInfoByUserId', 'getUserInfoByUserId');
 });

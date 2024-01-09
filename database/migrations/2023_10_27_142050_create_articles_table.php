@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('title')->comment('文章标题');
             $table->longText('content')->comment('文章内容');
-            $table->string('abstract')->comment('文章摘要');
-            $table->string('thumbnail')->comment('缩略图');
+            $table->longText('abstract')->comment('文章摘要');
+            $table->string('thumbnail')->nullable()->comment('缩略图');
             $table->integer('like')->default(0)->comment('喜欢');
+            $table->integer('star')->default(0)->comment('收藏');
             $table->integer('preview')->default(0)->comment('预览');
             $table->foreignId('category_id')->nullable()->constrained(); // 分类id
             $table->foreignId('user_id')->constrained(); // 用户id

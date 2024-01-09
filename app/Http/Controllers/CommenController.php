@@ -37,22 +37,6 @@ class CommenController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Commen $commen)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCommenRequest $request, Commen $commen)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Commen $commen)
